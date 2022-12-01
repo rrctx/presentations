@@ -16,7 +16,201 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
-				<section>Slide 1</section>
+				<section data-auto-animate>
+					<h2 data-id="code-title">Entering Functional without Endofunctors</h2>
+				</section>
+				<section>
+					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+						<h4>Object Oriented Problems</h4>
+						<div class="r-hstack justify-center">
+							<div data-id="box1" style="background: #999; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+							<div data-id="box2" style="background: #999; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+							<div data-id="box3" style="background: #999; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+						</div>
+					</section>
+					<section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+						<div class="r-stack">
+                            <div data-id="box1" style="background: red; width: 300px; height: 300px; border-radius: 200px;"></div>
+                            <div data-id="box2" style="background: white; width: 200px; height: 200px; border-radius: 200px;"></div>
+                            <div data-id="box3" style="background: red; width: 100px; height: 100px; border-radius: 200px;"></div>
+                        </div>
+						<ul style="margin-top: 16px;">
+                            <li>Awkwardness around inheritance abstractions.</li>
+                            <li>Subtyping without animals is complicated.</li>
+                            <li>Scope of reasoning is too large.</li>
+                        </ul>
+					</section>
+                    <section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+                        <div class="r-hstack justify-center">
+                            <div data-id="box1" style="background: green; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                            <div data-id="box2" style="background: #999; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                            <div data-id="box3" style="background: #999; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                        </div>
+                        <h3 style="margin-top: 16px;"> Inheritance</h3>
+
+                    </section>
+				</section>
+                <section data-auto-animate>
+                    <section data-auto-animate>
+                        The natural order:
+                        <pre data-id="code-animation"><code data-trim data-line-numbers>
+                            class Animal { ... }
+                            class Dog extends Animal { ... }
+                            class Cat extends Animal { ... }
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        The natural' order:
+                        <pre data-id="code-animation"><code data-trim data-line-numbers>
+                            class ? { ... }
+                            class Fridge extends ? { ... }
+                            class Freezer extends ? { ... }
+
+                            ...
+
+                            someGuy.checkTemp( ... )  // Don't let this melt!
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        <pre data-id="code-animation"><code data-trim data-line-numbers>
+                            // What should this super class be?
+                            class ? {
+                                protected val internalTempTarget
+                                def isStable() { ... }
+                                def checkTemp() { ... }
+                            ...
+                            }
+                            class Fridge extends ? { ... }
+                            class Freezer extends ? { ... }
+
+                            ...
+
+                            someGuy.checkTemp( ... )  // Don't let this melt!
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        <pre data-id="code-animation"><code data-trim data-line-numbers>
+                            // Should this be its most obvious super?
+                            class ElectricalApplicance {
+                                protected val internalTempTarget
+                                def isStable() { ... }
+                                def isPoweredOn() { ... }
+                                def checkTemp() { ... }
+                            ...
+                            }
+                            class Fridge extends ElectricalApplicance { ... }
+                            class Freezer extends ElectricalApplicance { ... }
+
+                            ...
+
+                            class Oven extends ElectricalApplicance { ... }
+                            class Dryer extends ElectricalApplicance { ... }
+                            class Washer extends ElectricalApplicance { ... }
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        Okay, maybe not. Try a different route:
+                        <pre data-id="code-animation"><code data-trim data-line-numbers>
+                            // Should this be its most obvious super?
+                            class Container { ... }
+                            class Fridge extends Container { ... }
+                            class Freezer extends Container { ... }
+
+                            ...
+
+                            class LunchBox extends Container { ... }
+                            class CardboardBox extends Container { ... }
+                            class ShippingCrate extends Container { ... }
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        Sidebar - alternative & common "solutions" to let Fridge/Freezer work together the way we would like:
+                        <pre data-id="code-animation"><code data-trim data-line-numbers>
+                            class Fridge extends SuperClass { ... }
+                            class Freezer extends Fridge { ... }
+                            // Or does freezer extend Fridge?
+                            // Will cause issues with parametric polymorphism.
+                        </code></pre>
+                        <pre data-id="code-animation"><code data-trim data-line-numbers>
+                            class FridgeLikeFreezerThing { ... }
+                            class Fridge extends FridgeLikeFreezerThing { ... }
+                            class Freezer extends FridgeLikeFreezerThing { ... }
+                            // Destroys the abstraction above it - but this works.
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        The solution we probably apply:
+                        <pre data-id="code-animation"><code data-trim data-line-numbers>
+                            class ElectricalApp { ... }
+                            class Fridge extends ElectricalApp with TempMonitor {
+                                protected val internalTempTarget = { ... }
+                                // Can't move this attribute into super or interface.
+                            ...
+                            }
+                            class Freezer extends ElectricalApp with TempMonitor {
+                                protected val internalTempTarget = { ... }
+                            ...
+                            }
+                        </code></pre>
+                    </section>
+                </section>
+
+
+                <section data-auto-animate>
+                    <section data-auto-animate>
+                       What were we solving? <br>
+                        Inheritance is a <b>hierarchical</b> relation.
+                        <pre data-id="code-animation"><code class="hljs-variable" data-trim data-line-numbers>
+                            ElecApp -> (Fridge, Freezer)
+                            ElecApp -> (Fridge, Freezer) <- TempMonitor
+                        </code></pre>
+                        By implementing interface, we added an <b>orthogonal</b> dependence which has a different relation to the primary abstraction. <br>
+                        This means we are often not sure of the <b>source</b> of attributes/methods (which can change what we think something does).
+                    </section>
+                </section>
+                <section data-auto-animate>
+                    <section data-auto-animate>
+                        How did we get there? <br><br>
+                        We had to 'reverse engineer' to derive the superclass. This is often what we do when we know the implementations we want. <br><br>
+                        This makes our classes fragile, as they tend to be increasingly forced into modification and not extension.
+                    </section>
+                </section>
+                <section data-auto-animate>
+                    <section data-auto-animate>
+                        Objects don't always correspond to the real world. <br>
+                        But the analogs in programming are typically built around our intuitions:
+                        <pre data-id="code-animation"><code class="hljs-variable" data-trim data-line-numbers>
+                            Cat { ... }
+
+                            TempMonitor { ... }
+
+                            CustomerDelivery { ... }
+
+                            AbstractSingletonProxyFactoryBean { ... }
+                        </code></pre>
+                        The concepts of these need to make sense. We will look further into this later ...
+                    </section>
+                </section>
+
+
+                <section data-auto-animate>
+                    <section data-auto-animate>
+                        <h2 data-id="code-title">Inheritance I</h2>
+                    </section>
+                    <section data-auto-animate>
+                        <h2 data-id="code-title">Inheritance I</h2>
+                        The natural' order:
+                        <pre><code data-trim data-line-numbers="|">
+                        class Animal { ... }
+                        class Dog extends Animal { ... }
+                        class Cat extends Animal { ... }
+                        class ? { ... }
+                        class Fridge extends ? { ... }
+                        class Freezer extends ? { ... }
+					    </code></pre>
+                    </section>
+
+                </section>
 				<section>Slide 2</section>
 			</div>
 		</div>
