@@ -40,6 +40,10 @@
                             <li>Scope of reasoning is too large.</li>
                         </ul>
 					</section>
+				</section>
+
+
+                <section data-auto-animate>
                     <section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
                         <div class="r-hstack justify-center">
                             <div data-id="box1" style="background: green; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
@@ -47,10 +51,7 @@
                             <div data-id="box3" style="background: #999; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
                         </div>
                         <h3 style="margin-top: 16px;"> Inheritance</h3>
-
                     </section>
-				</section>
-                <section data-auto-animate>
                     <section data-auto-animate>
                         The natural order:
                         <pre data-id="code-animation"><code data-trim data-line-numbers>
@@ -68,7 +69,7 @@
 
                             ...
 
-                            someGuy.checkTemp( ... )  // Don't let this melt!
+                            x.checkTemp( ... )  // Don't let this melt!
                         </code></pre>
                     </section>
                     <section data-auto-animate>
@@ -85,7 +86,7 @@
 
                             ...
 
-                            someGuy.checkTemp( ... )  // Don't let this melt!
+                            x.checkTemp( ... )  // Don't let this melt!
                         </code></pre>
                     </section>
                     <section data-auto-animate>
@@ -132,50 +133,43 @@
                             // Will cause issues with parametric polymorphism.
                         </code></pre>
                         <pre data-id="code-animation"><code data-trim data-line-numbers>
-                            class FridgeLikeFreezerThing { ... }
-                            class Fridge extends FridgeLikeFreezerThing { ... }
-                            class Freezer extends FridgeLikeFreezerThing { ... }
-                            // Destroys the abstraction above it - but this works.
+                            class ColdStorageElectricalApp extends ElectricalApp { ... }
+                            class Fridge extends ColdStorageElectricalApp { ... }
+                            class Freezer extends ColdStorageElectricalApp { ... }
+                            // Tends to destroy the abstraction above it - but this works.
                         </code></pre>
                     </section>
                     <section data-auto-animate>
-                        The solution we probably apply:
+                        If we want to keep the idea of implementations of the super class,
+                        this is the solution we probably apply:
                         <pre data-id="code-animation"><code data-trim data-line-numbers>
                             class ElectricalApp { ... }
-                            class Fridge extends ElectricalApp with TempMonitor {
+                            class Fridge extends ElectricalApp with TempMonitor with Container {
                                 protected val internalTempTarget = { ... }
                                 // Can't move this attribute into super or interface.
                             ...
                             }
-                            class Freezer extends ElectricalApp with TempMonitor {
+                            class Freezer extends ElectricalApp with TempMonitor with Container {
                                 protected val internalTempTarget = { ... }
                             ...
                             }
                         </code></pre>
                     </section>
-                </section>
-
-
-                <section data-auto-animate>
                     <section data-auto-animate>
-                       What were we solving? <br>
+                        What were we solving? <br>
                         Inheritance is a <b>hierarchical</b> relation.
-                        <pre data-id="code-animation"><code class="hljs-variable" data-trim data-line-numbers>
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
                             ElecApp -> (Fridge, Freezer)
-                            ElecApp -> (Fridge, Freezer) <- TempMonitor
+                            ElecApp -> (Fridge, Freezer) <- (TempMonitor, Container)
                         </code></pre>
                         By implementing interface, we added an <b>orthogonal</b> dependence which has a different relation to the primary abstraction. <br>
-                        This means we are often not sure of the <b>source</b> of attributes/methods (which can change what we think something does).
+                        This means we are weakening the reliance on the primary abstraction and that we are often not sure of the <b>source</b> of attributes/methods (which can change what we think something does).
                     </section>
-                </section>
-                <section data-auto-animate>
                     <section data-auto-animate>
                         How did we get there? <br><br>
                         We had to 'reverse engineer' to derive the superclass. This is often what we do when we know the implementations we want. <br><br>
                         This makes our classes fragile, as they tend to be increasingly forced into modification and not extension.
                     </section>
-                </section>
-                <section data-auto-animate>
                     <section data-auto-animate>
                         Objects don't always correspond to the real world. <br>
                         But the analogs in programming are typically built around our intuitions:
@@ -194,24 +188,515 @@
 
 
                 <section data-auto-animate>
-                    <section data-auto-animate>
-                        <h2 data-id="code-title">Inheritance I</h2>
-                    </section>
-                    <section data-auto-animate>
-                        <h2 data-id="code-title">Inheritance I</h2>
-                        The natural' order:
-                        <pre><code data-trim data-line-numbers="|">
-                        class Animal { ... }
-                        class Dog extends Animal { ... }
-                        class Cat extends Animal { ... }
-                        class ? { ... }
-                        class Fridge extends ? { ... }
-                        class Freezer extends ? { ... }
-					    </code></pre>
-                    </section>
+                    <section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+                        <div class="r-hstack justify-center">
+                            <div data-id="box2" style="background: darkred; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                            <div data-id="box1" style="background: green; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                            <div data-id="box3" style="background: #999; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                        </div>
+                        <h3 style="margin-top: 16px;"> Subtyping</h3>
 
+                    </section>
+                    <section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+                        <div class="r-hstack justify-center">
+                            <div data-id="box2" style="background: darkred; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                            <
+                            <div data-id="box1" style="background: green; width: 150px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                        </div>
+                        Subtyping as substitutivity - we can use a square anywhere we have a rectangle.
+                    </section>
+                    <section data-auto-animate>
+                        <h4>Variance in Parametric Polymorphism</h4>
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            Cat <: Animal
+                            Covariant -> SomeObj[Cat] <: SomeObj[Animal]
+                            Contravariant -> SomeObj[Animal] <: SomeObj[Cat]
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        What is the subtyping relation for Fruit => FruitSalad here?
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            class Fruit { ... }
+                            class Tomato extends Fruit { ... }
+                            class Watermelon extends Fruit { ... }
+
+                            ...
+
+                            def fsRecipe(fruit: Fruit): FruitSalad { ... }
+                            def tsRecipe(tomato: Tomato): FruitSalad { ... }
+                            def makeFruitSalad(recipe: Fruit => FruitSalad) { ... }
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        What is the subtyping relation for Fruit -> FruitSalad here?
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            def fsRecipe(fruit: Fruit): FruitSalad { ... }
+                            def tsRecipe(tomato: Tomato): FruitSalad { ... }
+                            def makeFruitSalad(recipe: Fruit => FruitSalad) {
+                                recipe(notTomato) // Hm.
+                            }
+
+                            def makeFruitSalad2(recipe: Tomato => FruitSalad) {
+                                recipe(Tomato) // Can we use Fruit => FruitSalad here?
+                            }
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        What is the subtyping relation for Fruit -> FruitSalad here?
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            def fsRecipe(fruit: Fruit): FruitSalad { ... }
+                            def tsRecipe(tomato: Tomato): FruitSalad { ... }
+                            def makeFruitSalad(recipe: Fruit => FruitSalad) {
+                                recipe(notTomato) // Hm.
+                            }
+
+                            // Tomato <: Fruit
+                            // Tomato -> FruitSalad
+                            // Fruit -> FruitSalad
+                            // We can use Fruit recipe in place of Tomato,
+                            //  but not the other way around.
+                            // Ergo;
+                            // Fruit -> FruitSalad <: Tomato -> FruitSalad
+                            // Generalizing for this case: A <: B
+                            // B -> C <: A -> C
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        The idea of a tomato as (fruit) directly interferes with our intuition about more complex types.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        Taking a look at some easier typing cases:
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            val z1: mutable.ListBuffer[Any] = mutable.ListBuffer[Int](1)
+                            val z2: List[Any] = List[Int](1)
+                        </code></pre>
+                        Will these both compile?
+                    </section>
+                    <section data-auto-animate>
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            val z1: mutable.ListBuffer[Any] = mutable.ListBuffer[Int](1)
+                            val z2: List[Any] = List[Int](1)
+
+                            // z1 fails to: required: scala.collection.mutable.ListBuffer[Any]
+                        </code></pre>
+                        What would happen if we could compile z1?
+                    </section>
+                    <section data-auto-animate>
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            val z1: mutable.ListBuffer[Any] = mutable.ListBuffer[Int](1)
+                            val z2: List[Any] = List[Int](1)
+                        </code></pre>
+                        What would happen if we could compile z1?
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            val z1: mutable.ListBuffer[Any] = mutable.ListBuffer[Int](1)
+                            z1.append("this is not an Int")
+                            // Is this a problem? z1 is a ListBuffer[Any].
+                            // Well... There is ListBuffer[Int] with a string inside it.
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        Wait a second, z2 can even do this:
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            var z2: List[Any] = List[Int](1) // z: List[Any] = List(1)
+                            z2 ++ List("asdf")               // res1: List[Any] = List(1, asdf)
+                            z2.map(item => item.toString)    // res2: List[String] = List(1, asdf)
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        Wait a second, z2 can even do this:
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            var z2: List[Any] = List[Int](1) // z: List[Any] = List(1)
+                            z2 ++ List("asdf")               // res1: List[Any] = List(1, asdf)
+                            z2.map(item => item.toString)    // res2: List[String] = List(1, asdf)
+                        </code></pre>
+                        Thank you immutability.
+                    </section>
+                    <section data-auto-animate>
+                        Subtyping is <b>complicated.</b> <br>
+                        This complexity grows with higher ordered types and other more complex generics.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            trait CanBuildFrom[-From, -Elem, +To] { ... }
+
+                            def map[B, That](f: A => B)(implicit bf: CanBuildFrom[List[A], B, That]): That { ... }
+
+                            def mapConserve[B >: A <: AnyRef](f: A => B): List[B] = { ... }
+                        </code></pre>
+                        It can be unclear what subtype is permitted, since we are using a system which expects that things ARE other things.
+                    </section>
+                    <section data-auto-animate>
+                        This is not <i>wrong</i> per se, but if we can't rely on intuition about objects, then we have to do the determination ourselves - abstractly.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
                 </section>
-				<section>Slide 2</section>
+
+
+				<section>
+                    <section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+                        <div class="r-hstack justify-center">
+                            <div data-id="box2" style="background: darkred; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                            <div data-id="box1" style="background: darkred; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                            <div data-id="box3" style="background: green; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                        </div>
+                        <h3 style="margin-top: 16px;"> Scope of Reasoning</h3>
+                    </section>
+                    <section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+                        <div>
+                            <div class="justify-center justify-around"></div>
+                            <div data-id="box1" style="background: #999; width: 900px; height: 500px; border-radius: 10px; position: absolute;"></div>
+                            <div data-id="box2" style="background: darkred; width: 900px; height: 100px; border-radius: 10px; position: relative; top: 200px;"></div>
+                            <div data-id="box3" style="background: darkgreen; width: 900px; height: 100px; border-radius: 10px; position: relative; top: 150px;"></div>
+                        </div>
+                    </section>
+                    <section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+                        <div>
+                            <div class="justify-center justify-around"></div>
+                            <div data-id="box1" style="background: #999; width: 900px; height: 500px; border-radius: 10px; position: absolute;"></div>
+                            <div data-id="box2" style="background: darkred; width: 900px; height: 500px; border-radius: 10px; position: relative; top: 0px;"></div>
+                            <div data-id="box3" style="background: darkgreen; width: 900px; height: 100px; border-radius: 10px; position: relative; top: -300px;"></div>
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        What 'needs to be known' to extend or modify this code?
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            ...
+
+                                while something {
+                                    ...
+                                    val occurrence = someObj.getOccurrence()
+                                    if (occurrence.happened) { ... } else { ... }
+                                    ...
+                                    // To extend code here, what do we have to know?
+                                }
+
+                            ...
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            ...
+
+                                while something {
+                                    ...
+                                    val occurrence = someObj.getOccurrence()
+                                    if (occurrence.happened()) { ... } else { ... }
+                                    ...
+                                    // To extend code here, what do we have to know?
+                                    // Is occurrence safe to use?
+                                    // As in, do we have all its info?
+                                    if (occurrence ... ) { ... }
+                                }
+
+                            ...
+                        </code></pre>
+                        What if occurrence needs to incur a side effect (I/O, a request, etc)? Something is happening that isn't purely represented in the return value of the execution.
+                    </section>
+                    <section data-auto-animate>
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            ...
+
+                                while something {
+                                    ...
+                                    val occurrence = someObj.getOccurrence()
+                                    if (occurrence.happened()) { ... } else { ... }
+                                    ...
+                                    // Maybe we aren't sure so replace it
+                                    //  with its bound value.
+                                    if (someObj.getOccurrence() ... ) { ... }
+                                }
+
+                            ...
+                        </code></pre>
+                        This doesn't seem to help either since we might be invoking a side effect without intending.
+                    </section>
+                    <section data-auto-animate>
+                        The possibility of side effects in the general case prevent the ability to extend code without understanding everything the code segment invokes.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        Anything in scope is in the scope of reasoning. <br> To understand anything is to understand everything.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        In many cases "everything" is not an unreasonable amount. My gambit is that when things do get complicated, this becomes a significant problem.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        This is always a significant problem - uncomplicated code is already uncomplicated.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        The typical object oriented way of dealing with this is with design patterns and effective factoring of code. <br>
+                        But this is just containment and tends to not dampen the harm where it really hurts; in high level orchestration.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            ...
+                                while something {
+                                    ...
+                                    val occurrence = someObj.getOccurrence()
+                                    if (occurrence.happened()) { ... } else { ... }
+                                    // Calling here but they are referentially opaque.
+                                    ...
+                                }
+                            ...
+                        </code></pre>
+                        Every object in scope is 'in scope'.
+                    </section>
+                    <section data-auto-animate>
+                        What would this look like without side effects?
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                </section>
+
+
+                <section>
+                    <section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+                        <h3 style="margin-top: 16px;"> Enter Functional</h3>
+                        <div class="r-hstack justify-center">
+                            <div data-id="box2" style="background: darkred; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                            <div data-id="box1" style="background: darkred; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                            <div data-id="box3" style="background: darkred; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        Functional programming is a programming paradigm where programs are constructed by applying and composing functions. <br> - Wikipedia
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        Purely functional programming; a subset of functional programming which treats all functions as deterministic mathematical functions.
+                        <br> - Wikipedia
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        The spiral begins with the Curry-Howard isomorphism, leads to lambda calculus and category theory, and ends with something like confusion.  <br> - Wikipedia
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        S : (α → β → γ) → (α → β) → α → γ,
+                        put α = δ, β = α → β → γ, and γ = (α → β) → α → γ, yielding
+                        S[α = δ, β = α → β → γ, γ = (α → β) → α → γ] : (δ → (α → β → γ) → (α → β) → α → γ) → (δ → (α → β → γ)) → δ → (α → β) → α → γ
+                        </code></pre>
+                    </section>
+                </section>
+                <section>
+                    <section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+                        <div class="r-hstack justify-center">
+                            <div data-id="box2" style="background: darkred; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                            <div data-id="box1" style="background: darkred; width: 50px; height: 50px; margin: 10px; border-radius: 5px;"></div>
+                            <div data-id="box3" style="background: #999; width: 50px; height: 50px; margin: 10px; border-radius: 50px;"></div>
+                        </div>
+                        <h3 style="margin-top: 16px;"> Referential Transparency</h3>
+                    </section>
+                    <section data-auto-animate>
+                        Let's take another look at this segment:
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            ...
+                                while something {
+                                    ...
+                                    val occurrence = someObj.getOccurrence()
+                                    if (occurrence.happened()) { ... } else { ... }
+                                    ...
+                                }
+                            ...
+                        </code></pre>
+                        What would be in scope if every object was immutable?
+                    </section>
+                    <section data-auto-animate>
+                        What would be in scope if every object was immutable and effectless?
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            ...
+                                while something {
+                                    ...
+                                    val occurrence = someObj.getOccurrence()
+                                    if (occurrence.happened()) { ... } else { ... }
+                                    ...
+
+                                    occurrence.doSomethingElse() // Reusable here.
+                                }
+                            ...
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        The problem was that everything is in (theoretical) scope - by removing side effects, we have removed scope itself.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        Every expression can be substituted for its value without changing the program's behaviour. <br> This is referential transparency.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        This allows true compositionality; any function with the correct type signatures can be trusted to successfully apply and transform - and this remains digestible as each can be understood independently.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        Complicated control flow can be simplified tremendously:
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            def healthCheck: Stream[IO, Boolean] = {
+                                val retryCheck =
+                                    Stream
+                                    .retry(healthCheckFunc, 1.second, _ + 1, maxRetries = 5)
+                                    .handleError(_ => ErrorResponse)
+                                val repeatedChecks = (retryCheck ++ Stream.sleep(1.hour)).repeat
+
+                                repeatedChecks.map(response => response.isEverythingOk)
+                            }
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                            def healthCheck: Stream[IO, Boolean] = {
+                                val retryCheck =
+                                    Stream
+                                    .retry(healthCheck, 1.second, _ + 1, maxRetries = 5)
+                                    .handleError(_ => ErrorResponse)
+                                val repeatedChecks = (retryCheck.map(modifyStream)).repeat
+                                // We are sure we can safely modify code here.
+
+                                repeatedChecks.map(response => response.isEverythingOk)
+                            }
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        Referential transparency radically improves our ability to understand and write code.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                </section>
+
+
+                <section>
+                    <section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+                        <div class="r-hstack justify-center">
+                            <div data-id="box2" style="background: #999; width: 50px; height: 50px; margin: 10px; border-radius: 50px;"></div>
+                            <div data-id="box1" style="background: #999; width: 50px; height: 50px; margin: 10px; border-radius: 50px;"></div>
+                            <div data-id="box3" style="background: #999; width: 50px; height: 50px; margin: 10px; border-radius: 50px;"></div>
+                        </div>
+                        <h3 style="margin-top: 16px;"> Inheritance & Subtyping</h3>
+                    </section>
+                    <section data-auto-animate>
+                        Pure functional code does not have the question of whether an object is the same as another, instead, expressions are evaluated to emit a value.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                        Ergo, pure functional code does not support inheritance or subtyping in the object-oriented way.
+                    </section>
+                    <section data-auto-animate>
+                        The important part of inheritance, ad hoc polymorphism (the ability to apply a polymorphic function to produce different behaviours) is supported through Typeclasses.
+                        <pre data-id="code-animation"><code class="language-haskell" data-trim data-line-numbers>
+                            class Eq a where
+                            (==) :: a -> a -> Bool
+                            (/=) :: a -> a -> Bool
+                        </code></pre>
+                        Any type part of a Typeclass will require that the Typeclass's operations are all supported.
+                    </section>
+                    <section data-auto-animate>
+                        The important part of inheritance, ad hoc polymorphism (the ability to apply a polymorphic function to produce different behaviours) is supported through Typeclasses.
+                        <pre data-id="code-animation"><code class="language-haskell" data-trim data-line-numbers>
+                            class Eq a where
+                            (==) :: a -> a -> Bool
+                            (/=) :: a -> a -> Bool
+                        </code></pre>
+                        It is easiest to think of these as cognates of OOP's interface.
+                    </section>
+                    <section data-auto-animate>
+                        Typically we can derive instances for common type classes:
+                        <pre data-id="code-animation"><code class="language-haskell" data-trim data-line-numbers>
+                            data Pair a = Pair a a
+                                deriving (Eq, Show)
+                            ...
+                            instance Eq Pair where
+                                ...
+                        </code></pre>
+                    </section>
+                </section>
+
+
+                <section>
+                    <section data-auto-animate data-auto-animate-easing="cubic-bezier(0.770, 0.000, 0.175, 1.000)">
+                        <h3 style="margin-top: 16px;"> Conclusion</h3>
+                        <div class="r-hstack justify-center">
+                            <div data-id="box2" style="background: green; width: 50px; height: 50px; margin: 10px; border-radius: 50px;"></div>
+                            <div data-id="box1" style="background: green; width: 50px; height: 50px; margin: 10px; border-radius: 50px;"></div>
+                            <div data-id="box3" style="background: green; width: 50px; height: 50px; margin: 10px; border-radius: 50px;"></div>
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        Given code of reasonable complexity:
+                        <ul>&nbsp
+                            <li>Inheritance hierarchies are difficult to generate/navigate effectively.</li>
+                            <li>Subtyping relations are complicated to the extent that we cannot rely on our base intuitions. They must be reasoned abstractly.</li>
+                            <li>Referential opacity forces our scope of reasoning to be global.</li>
+                        </ul>
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        Purely functional code alleviates these issues:
+                        <ul>&nbsp
+                            <li>Inheritance and subtyping are replaced by composition and derived instances.</li>
+                            <li>Referential transparency converts global reasoning to local reasoning.</li>
+                        </ul>
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        In general functional code tends to rely on the ability of the programmer to compose disparate type signatures.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                        In contrast, OOP's object 'abstraction' (idea) tends to take the center.
+                    </section>
+                    <section data-auto-animate>
+                        It is hard to write good object-oriented code but easy to write bad object-oriented code.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        It is hard to write good functional code but also hard to write bad functional code.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                </section>
+
+
+                <section>
+                    <section data-auto-animate>
+                        Ok, no side-effects - how do we ping a database?
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        But how do we represent the value of that expression? <br>
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                        <div class="my-spoiler-content" id="1" style= "display:none">
+                            Hidden Content
+                        </div>
+                    </section>
+                    <section data-auto-animate>
+                        But how do we represent the value of that expression? <br>
+                        The IO Monad.
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                    </section>
+                    <section data-auto-animate>
+                        But how do we represent the value of that expression? <br>
+                        The IO Monad. <br>
+                        <pre data-id="code-animation"><code class="language-scala" data-trim data-line-numbers>
+                        </code></pre>
+                        But that's a problem for another day.
+                    </section>
+                    <section data-auto-animate>
+                        Thanks for coming.
+                    </section>
+                </section>
 			</div>
 		</div>
 
